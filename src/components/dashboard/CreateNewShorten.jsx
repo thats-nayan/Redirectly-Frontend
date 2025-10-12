@@ -37,7 +37,7 @@ const CreateNewShorten = ({ setOpen, refetch }) => {
         },
       })
 
-      const shortenUrl = `${import.meta.env.VITE_REACT_FRONT_END_URL + "/" + `${response.data.shortUrl}`}`;
+      const shortenUrl = `${import.meta.env.VITE_REACT_FRONT_END_URL + "/shortUrls/" + `${response.data.shortUrl}`}`;
 
       // Copy to clipboard
       navigator.clipboard.writeText(shortenUrl).then(() => {
