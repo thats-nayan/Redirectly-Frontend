@@ -26,6 +26,9 @@ const Footer = () => {
           <a href="https://www.linkedin.com/in/nayan-hanandy-1a819821a/" className="hover:text-gray-200">
             <FaLinkedin size={24} />
           </a>
+          <a href="https://www.instagram.com/thats_nayan/" className="hover:text-gray-200">
+            <FaInstagram size={24} />
+          </a>
         </div>
       </div>
     </footer>
