@@ -9,11 +9,13 @@ import { useState } from 'react';
 import { IoCopy } from "react-icons/io5";
 import { LiaCheckSolid } from "react-icons/lia";
 import { MdAnalytics } from "react-icons/md";
+import { LiaQrcodeSolid } from "react-icons/lia";
 import { Hourglass } from 'react-loader-spinner';
 import api from '../../api/api';
 import { ContextApi } from "../../contextApi/ContextApi";
 import { useContext } from "react";
 import Graph from './Graph';
+import QRPopup from '../dashboard/QRPopup';
 
 const ShortenItem = ({ originalUrl, shortUrl, clickCount, createdAt }) => {
 
@@ -29,6 +31,8 @@ const ShortenItem = ({ originalUrl, shortUrl, clickCount, createdAt }) => {
     const [selectedUrl, setSelectedUrl] = useState(null);
     const [loader, setLoader] = useState(false);
     const [analyticsData, setAnalyticsData] = useState([]);
+    const [qrOpen, setQrOpen] = useState(false);
+    const [qrImageUrl, setQrImageUrl] = useState("");
 
     const analyticsHandler = (shortUrl) => {
         if (!analyticToggle) {
@@ -37,6 +41,17 @@ const ShortenItem = ({ originalUrl, shortUrl, clickCount, createdAt }) => {
         }
         setAnalyticToggle(!analyticToggle);
     }
+
+    const handleQrGenerate = (shortUrl) => {
+        const encodedUrl = encodeURIComponent(
+            `${import.meta.env.VITE_REACT_FRONT_END_URL}/shortUrls/${shortUrl}`
+        );
+
+        const qrApiBase = import.meta.env.VITE_QR_API_BASE_URL;
+        const qrApiUrl = `${qrApiBase}?text=${encodedUrl}&size=200`;
+        setQrImageUrl(qrApiUrl);
+        setQrOpen(true);
+    };
 
     const fetchUrlAnalytics = async (shortUrl) => {
         // Fetch analytics data for the given shortUrl
@@ -125,11 +140,19 @@ const ShortenItem = ({ originalUrl, shortUrl, clickCount, createdAt }) => {
                                 </div>
                             </CopyToClipboard>
                             <div
+                                onClick={() => handleQrGenerate(shortUrl)}
+                                className="flex cursor-pointer gap-1 items-center bg-emerald-600 hover:bg-emerald-700 py-2 font-semibold shadow-md shadow-slate-500 px-6 rounded-md text-white transition-all"
+                            >
+                                <button>Show QR</button>
+                                <LiaQrcodeSolid className="text-md" />
+                            </div>
+                            <div
                                 onClick={() => analyticsHandler(shortUrl)}
                                 className="flex cursor-pointer gap-1 items-center bg-rose-700 py-2 font-semibold shadow-md shadow-slate-500 px-6 rounded-md text-white "
                             >
                                 <button>Analytics</button>
                                 <MdAnalytics className="text-md" />
+
                             </div>
                         </div>
                     </div>
@@ -171,6 +194,14 @@ const ShortenItem = ({ originalUrl, shortUrl, clickCount, createdAt }) => {
 
                 </div>
             </React.Fragment>
+
+            {qrOpen && (
+                <QRPopup
+                    qrOpen={qrOpen}
+                    setQrOpen={setQrOpen}
+                    qrImageUrl={qrImageUrl}
+                />
+            )}
         </div>
     )
 }
